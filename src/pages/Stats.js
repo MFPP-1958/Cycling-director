@@ -59,6 +59,7 @@ export function renderStats () {
     const bestWkg = withWkg.length
       ? withWkg.reduce((a, b) => Number(a.wkg) > Number(b.wkg) ? a : b)
       : null
+    const bestWkgValue = bestWkg ? Number(bestWkg.wkg).toFixed(2) : null
 
     // ── Distribución por categorías ─────────────────────────────────
     const catMap = {}
@@ -157,7 +158,7 @@ export function renderStats () {
             🏆 MEJORES CICLISTAS
           </div>
           ${champCard('Mayor Potencia Absoluta (FTP)', bestFtp, bestFtp?.ftp_watts, 'W', '#ffa502')}
-          ${champCard('Mayor Potencia Relativa (W/kg)', bestWkg, bestWkg?.wkg?.toFixed(2), '', 'var(--ac)')}
+          ${champCard('Mayor Potencia Relativa (W/kg)', bestWkg, bestWkgValue, '', 'var(--ac)')}
         </div>
 
         <!-- DISTRIBUCIÓN POR CATEGORÍAS -->
