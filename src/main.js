@@ -155,7 +155,7 @@ export function navigate (id) {
   if (id === 'team')         renderTeamPanel()
   if (id === 'history')      renderHistoryPanel()
   if (id === 'individual')   populateRiderSelect()
-  if (id === 'estadisticas') { window.renderStats?.() }
+  if (id === 'estadisticas') renderStatsPanel()
 }
 
 function updateSidebar () {
@@ -341,6 +341,14 @@ async function renderHistoryPanel () {
   await loadRaces()
   const { renderHistory } = await import('./pages/History.js')
   renderHistory(APP.races)
+}
+
+// ── Stats panel ───────────────────────────────────────────────────
+async function renderStatsPanel () {
+  const el = document.getElementById('panel-estadisticas')
+  if (!el) return
+  const { renderStats } = await import('./pages/Stats.js')
+  renderStats()
 }
 
 // ── AI analyses ───────────────────────────────────────────────────

@@ -532,7 +532,6 @@ import { confirmDeleteRace, exportHistoryCSV, exportHistoryXLSX } from './src/pa
 import { openAI, closeAI, clearChat, setPrompt, handleKey,
          sendMessage, exportAllAnalysesDoc, exportRaceAnalysesDocById } from './src/pages/AIAssistant.js'
 import { dlTableCSV, dlTableXLSX } from './src/components/TableDownload.js'
-import { renderStats } from './src/pages/Stats.js'
 
 // Wire up all global onclick handlers
 window.navigate            = navigate
@@ -541,7 +540,6 @@ window.stagePlantilla      = stagePlantilla
 window.runAndSaveAnalysis  = runAndSaveAnalysis
 window.loadRaceFromHistory = loadRaceFromHistory
 window.showToast           = showToast
-window.renderStats         = renderStats
 
 window.onRiderSelect = () => {
   const idx = parseInt(document.getElementById('sel-rider').value)
