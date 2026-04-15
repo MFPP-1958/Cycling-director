@@ -324,7 +324,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
   </div>
 
   <!-- RIDER MODAL (Add/Edit) -->
-  <dialog id="mod-rider" style="padding:0;border:none;border-radius:12px;background:var(--s1);color:var(--tx);max-width:500px;width:100%;backdrop-filter:blur(5px)">
+  <dialog id="mod-rider" style="padding:0;border:1px solid var(--b2);border-radius:12px;background:var(--s2);color:var(--tx);max-width:520px;width:90%;box-shadow:0 20px 50px rgba(0,0,0,0.5);margin:auto">
+    <style>
+      #mod-rider::backdrop {
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(4px);
+      }
+    </style>
     <div style="padding:18px 24px;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center">
       <div class="ctitle" style="margin:0" id="mod-rider-title">➕ Añadir ciclista</div>
       <button class="btn btn-sm" onclick="closeRiderModal()">✕</button>
