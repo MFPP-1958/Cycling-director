@@ -468,26 +468,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 
 <!-- ── PLACEHOLDER PANELS ──────────────────────────────────────────── -->
 
-<!-- ESTADÍSTICAS (placeholder — agrupa módulos de análisis, en construcción) -->
+<!-- ESTADÍSTICAS — contenido renderizado dinámicamente por Stats.js -->
 <div class="panel" id="panel-estadisticas">
-  <div class="ptitle">📊 Estadísticas</div>
-  <div class="psub">Panel de estadísticas avanzadas · En construcción</div>
-  <div class="card" style="text-align:center;padding:48px">
-    <div style="font-size:48px;margin-bottom:16px">📊</div>
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:8px">Módulo en construcción</div>
-    <div style="font-size:13px;color:var(--mu);max-width:400px;margin:0 auto;line-height:1.7">
-      Este módulo centralizará todas las estadísticas del equipo.<br>
-      Mientras tanto, accede a los sub-módulos desde el sidebar:
-      <strong style="color:var(--ac)">Dashboard · Potencia · FC · Perfil · Vista Individual</strong>.
-    </div>
-    <div style="display:flex;gap:10px;justify-content:center;margin-top:24px;flex-wrap:wrap">
-      <button class="btn btn-ac" onclick="navigate('dashboard')">📊 Dashboard</button>
-      <button class="btn" onclick="navigate('power')">⚡ Potencia</button>
-      <button class="btn" onclick="navigate('heartrate')">❤️ FC y Zonas</button>
-      <button class="btn" onclick="navigate('individual')">🚴 Vista individual</button>
-    </div>
-  </div>
+  <!-- renderStats() llenará este contenedor -->
 </div>
+
 
 <!-- DIAGNÓSTICO Y REVISIÓN (placeholder) -->
 <div class="panel" id="panel-diagnostico">
@@ -547,6 +532,7 @@ import { confirmDeleteRace, exportHistoryCSV, exportHistoryXLSX } from './src/pa
 import { openAI, closeAI, clearChat, setPrompt, handleKey,
          sendMessage, exportAllAnalysesDoc, exportRaceAnalysesDocById } from './src/pages/AIAssistant.js'
 import { dlTableCSV, dlTableXLSX } from './src/components/TableDownload.js'
+import { renderStats } from './src/pages/Stats.js'
 
 // Wire up all global onclick handlers
 window.navigate            = navigate
@@ -555,6 +541,7 @@ window.stagePlantilla      = stagePlantilla
 window.runAndSaveAnalysis  = runAndSaveAnalysis
 window.loadRaceFromHistory = loadRaceFromHistory
 window.showToast           = showToast
+window.renderStats         = renderStats
 
 window.onRiderSelect = () => {
   const idx = parseInt(document.getElementById('sel-rider').value)

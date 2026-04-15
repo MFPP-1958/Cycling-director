@@ -152,9 +152,10 @@ export function navigate (id) {
   const tb = document.getElementById('topbar-title')
   if (tb) tb.textContent = TITLES[id] || id
 
-  if (id === 'team')    renderTeamPanel()
-  if (id === 'history') renderHistoryPanel()
-  if (id === 'individual') populateRiderSelect()
+  if (id === 'team')         renderTeamPanel()
+  if (id === 'history')      renderHistoryPanel()
+  if (id === 'individual')   populateRiderSelect()
+  if (id === 'estadisticas') { window.renderStats?.() }
 }
 
 function updateSidebar () {
