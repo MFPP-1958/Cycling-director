@@ -122,20 +122,45 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
     <img src="/logo.png" alt="MFPP Logo" style="width:100%;max-width:160px;display:block;margin:0 auto">
   </div>
   <nav class="nav">
-    <div class="nst">Análisis</div>
-    <div class="ni active" id="nav-import"     onclick="navigate('import')">📂 Importar carrera</div>
-    <div class="ni" id="nav-dashboard"          onclick="navigate('dashboard')">📊 Dashboard</div>
-    <div class="ni" id="nav-power"              onclick="navigate('power')">⚡ Potencia y picos</div>
-    <div class="ni" id="nav-heartrate"          onclick="navigate('heartrate')">❤️ FC y zonas</div>
-    <div class="ni" id="nav-profile"            onclick="navigate('profile')">🎯 Perfil ciclista</div>
-    <div class="ni" id="nav-individual"         onclick="navigate('individual')">🚴 Vista individual</div>
-    <div class="sep" style="margin:8px 0"></div>
-    <div class="nst">Gestión</div>
-    <div class="ni" id="nav-team"               onclick="navigate('team')">👥 Plantilla</div>
-    <div class="ni" id="nav-history"            onclick="navigate('history')">📅 Histórico</div>
-    <div class="sep" style="margin:8px 0"></div>
-    <div class="nst">Inteligencia</div>
-    <div class="ni" id="nav-ai"                 onclick="openAI()">🤖 Asistente IA</div>
+
+    <!-- 1. GESTIÓN DE PLANTILLA -->
+    <div class="ni" id="nav-team"          onclick="navigate('team')">👥 Gestión de Plantilla</div>
+
+    <div class="sep" style="margin:6px 0"></div>
+
+    <!-- 2. ESTADÍSTICAS (agrupa los módulos de análisis existentes) -->
+    <div class="nst">Estadísticas</div>
+    <div class="ni" id="nav-estadisticas"  onclick="navigate('estadisticas')">📊 Estadísticas</div>
+    <div class="ni" id="nav-dashboard"     onclick="navigate('dashboard')"     style="padding-left:22px;font-size:12px">↳ Dashboard</div>
+    <div class="ni" id="nav-power"         onclick="navigate('power')"         style="padding-left:22px;font-size:12px">↳ Potencia y picos</div>
+    <div class="ni" id="nav-heartrate"     onclick="navigate('heartrate')"     style="padding-left:22px;font-size:12px">↳ FC y zonas</div>
+    <div class="ni" id="nav-profile"       onclick="navigate('profile')"       style="padding-left:22px;font-size:12px">↳ Perfil ciclista</div>
+    <div class="ni" id="nav-individual"    onclick="navigate('individual')"    style="padding-left:22px;font-size:12px">↳ Vista individual</div>
+
+    <div class="sep" style="margin:6px 0"></div>
+
+    <!-- 3. CARGA DE DATOS -->
+    <div class="ni active" id="nav-import" onclick="navigate('import')">📂 Carga de Datos</div>
+
+    <!-- 4. DIAGNÓSTICO Y REVISIÓN -->
+    <div class="ni" id="nav-diagnostico"   onclick="navigate('diagnostico')">🔍 Diagnóstico y Revisión</div>
+
+    <!-- 5. ANÁLISIS INTERACTIVO -->
+    <div class="ni" id="nav-analisis"      onclick="navigate('analisis')">🔬 Análisis Interactivo</div>
+
+    <div class="sep" style="margin:6px 0"></div>
+
+    <!-- 6. GESTIÓN DE INFORMES (incluye el histórico existente) -->
+    <div class="ni" id="nav-history"       onclick="navigate('history')">📋 Gestión de Informes</div>
+
+    <!-- 7. ASISTENTE DE DATOS -->
+    <div class="ni" id="nav-ai"            onclick="openAI()">🤖 Asistente de Datos</div>
+
+    <div class="sep" style="margin:6px 0"></div>
+
+    <!-- 8. CONFIGURACIÓN -->
+    <div class="ni" id="nav-config"        onclick="navigate('config')">⚙️ Configuración</div>
+
   </nav>
   <div class="sb-bot">
     <div class="sb-ct">Ciclistas: <span id="sc-riders">0</span></div>
@@ -440,6 +465,72 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 </div>
 
 <div id="toast"></div>
+
+<!-- ── PLACEHOLDER PANELS ──────────────────────────────────────────── -->
+
+<!-- ESTADÍSTICAS (placeholder — agrupa módulos de análisis, en construcción) -->
+<div class="panel" id="panel-estadisticas">
+  <div class="ptitle">📊 Estadísticas</div>
+  <div class="psub">Panel de estadísticas avanzadas · En construcción</div>
+  <div class="card" style="text-align:center;padding:48px">
+    <div style="font-size:48px;margin-bottom:16px">📊</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:8px">Módulo en construcción</div>
+    <div style="font-size:13px;color:var(--mu);max-width:400px;margin:0 auto;line-height:1.7">
+      Este módulo centralizará todas las estadísticas del equipo.<br>
+      Mientras tanto, accede a los sub-módulos desde el sidebar:
+      <strong style="color:var(--ac)">Dashboard · Potencia · FC · Perfil · Vista Individual</strong>.
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:24px;flex-wrap:wrap">
+      <button class="btn btn-ac" onclick="navigate('dashboard')">📊 Dashboard</button>
+      <button class="btn" onclick="navigate('power')">⚡ Potencia</button>
+      <button class="btn" onclick="navigate('heartrate')">❤️ FC y Zonas</button>
+      <button class="btn" onclick="navigate('individual')">🚴 Vista individual</button>
+    </div>
+  </div>
+</div>
+
+<!-- DIAGNÓSTICO Y REVISIÓN (placeholder) -->
+<div class="panel" id="panel-diagnostico">
+  <div class="ptitle">🔍 Diagnóstico y Revisión</div>
+  <div class="psub">Revisión técnica de ciclistas · En construcción</div>
+  <div class="card" style="text-align:center;padding:48px">
+    <div style="font-size:48px;margin-bottom:16px">🔍</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:8px">Módulo en construcción</div>
+    <div style="font-size:13px;color:var(--mu);max-width:420px;margin:0 auto;line-height:1.7">
+      Aquí se centralizarán las herramientas de diagnóstico técnico y revisión de rendimiento de cada ciclista.<br><br>
+      <span style="color:var(--ac)">Próximamente disponible</span>
+    </div>
+  </div>
+</div>
+
+<!-- ANÁLISIS INTERACTIVO (placeholder) -->
+<div class="panel" id="panel-analisis">
+  <div class="ptitle">🔬 Análisis Interactivo</div>
+  <div class="psub">Herramientas de análisis avanzado · En construcción</div>
+  <div class="card" style="text-align:center;padding:48px">
+    <div style="font-size:48px;margin-bottom:16px">🔬</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:8px">Módulo en construcción</div>
+    <div style="font-size:13px;color:var(--mu);max-width:420px;margin:0 auto;line-height:1.7">
+      Este módulo permitirá realizar análisis interactivos personalizados sobre los datos de la carrera y del equipo.<br><br>
+      <span style="color:var(--ac)">Próximamente disponible</span>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIGURACIÓN (placeholder) -->
+<div class="panel" id="panel-config">
+  <div class="ptitle">⚙️ Configuración</div>
+  <div class="psub">Ajustes del sistema y preferencias · En construcción</div>
+  <div class="card" style="text-align:center;padding:48px">
+    <div style="font-size:48px;margin-bottom:16px">⚙️</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:8px">Módulo en construcción</div>
+    <div style="font-size:13px;color:var(--mu);max-width:420px;margin:0 auto;line-height:1.7">
+      Aquí podrás configurar preferencias del sistema, claves de API para el asistente IA, y la identidad de tu equipo.<br><br>
+      <span style="color:var(--ac)">Próximamente disponible</span>
+    </div>
+  </div>
+</div>
+
 </div><!-- /app-root -->
 
 <script type="module">

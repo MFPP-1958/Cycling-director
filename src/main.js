@@ -125,16 +125,21 @@ function renderApp () {
 }
 
 // ── Navigation ────────────────────────────────────────────────────
-const PANELS = ['import','dashboard','power','heartrate','profile','individual','team','history']
+const PANELS = ['import','dashboard','power','heartrate','profile','individual','team','history','estadisticas','diagnostico','analisis','informes','config']
 const TITLES  = {
-  import:     'Importar carrera',
-  dashboard:  'Dashboard general',
-  power:      'Potencia y picos',
-  heartrate:  'FC y zonas',
-  profile:    'Perfil del ciclista',
-  individual: 'Vista individual',
-  team:       'Gestión de plantilla',
-  history:    'Histórico de carreras'
+  import:       'Carga de Datos',
+  dashboard:    'Dashboard general',
+  power:        'Potencia y picos',
+  heartrate:    'FC y zonas',
+  profile:      'Perfil del ciclista',
+  individual:   'Vista individual',
+  team:         'Gestión de Plantilla',
+  history:      'Gestión de Informes',
+  estadisticas: 'Estadísticas',
+  diagnostico:  'Diagnóstico y Revisión',
+  analisis:     'Análisis Interactivo',
+  informes:     'Gestión de Informes',
+  config:       'Configuración'
 }
 
 export function navigate (id) {
