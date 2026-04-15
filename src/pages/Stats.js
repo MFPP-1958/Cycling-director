@@ -171,9 +171,9 @@ export function renderStats () {
 
       </div>`
   } catch (err) {
-    el.innerHTML = \`<div style="color:var(--dg);padding:20px;">
+    el.innerHTML = `<div style="color:var(--dg);padding:20px;">
       <h2>Error capturado en Stats.js:</h2>
-      <pre style="white-space:pre-wrap;background:#111;padding:10px;border-radius:4px;margin-top:10px;">\${err.stack}</pre>
-    </div>\`
+      <pre style="white-space:pre-wrap;background:#111;padding:10px;border-radius:4px;margin-top:10px;">${err.stack}</pre>
+    </div>`
   }
 }
