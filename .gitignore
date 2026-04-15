@@ -1,0 +1,24 @@
+# Dependencies
+node_modules
+.DS_Store
+
+# Build
+dist
+dist-ssr
+*.local
+
+# Environment
+.env
+.env.development
+.env.production
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE
+.vscode
+.idea
+.antigravity

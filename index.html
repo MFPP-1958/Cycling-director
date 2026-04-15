@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyclingDirector — Race Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#0a0c0f;--s1:#12151a;--s2:#1a1e26;--s3:#222736;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.14);--tx:#eef0f5;--mu:#7a8090;--ac:#e8ff47;--a2:#47a3ff;--a3:#ff6b47;--a4:#47ffb8;--a5:#c47fff;--dg:#ff4757;--wn:#ffa502;--ok:#2ed573}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5;min-height:100vh}
+#sb{position:fixed;left:0;top:0;bottom:0;width:214px;background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;z-index:100}
+.logo{padding:20px 18px 16px;border-bottom:1px solid var(--b1)}
+.logo-t{font-family:'Bebas Neue',sans-serif;font-size:25px;letter-spacing:2px;color:var(--ac);line-height:1}
+.logo-s{font-size:10px;color:var(--mu);letter-spacing:3px;text-transform:uppercase;margin-top:3px}
+.nav{padding:12px 10px;flex:1;overflow-y:auto}
+.nst{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mu);padding:7px 8px 3px}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;color:var(--mu);font-size:13px;transition:all .15s;margin-bottom:2px;user-select:none}
+.ni:hover{background:var(--s2);color:var(--tx)}.ni.active{background:var(--s3);color:var(--ac);font-weight:500}
+.sb-bot{padding:12px 14px;border-top:1px solid var(--b1)}
+.sb-ct{font-size:11px;color:var(--mu);margin-bottom:5px}.sb-ct span{color:var(--ac);font-weight:600;font-family:'DM Mono',monospace}
+#main{margin-left:214px;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(10,12,15,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--b1);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tb-t{font-size:15px;font-weight:500;flex:1}
+.tb-a{display:flex;gap:7px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--b2);background:var(--s2);color:var(--tx);transition:all .15s;font-family:'DM Sans',sans-serif}
+.btn:hover{background:var(--s3)}.btn-ac{background:var(--ac);color:#000;border-color:var(--ac)}.btn-ac:hover{opacity:.88}.btn-sm{padding:3px 8px;font-size:11px}
+.btn-csv{background:rgba(46,213,115,.12);border-color:rgba(46,213,115,.3);color:#2ed573}.btn-csv:hover{background:rgba(46,213,115,.22)}
+.btn-xls{background:rgba(71,163,255,.12);border-color:rgba(71,163,255,.3);color:#47a3ff}.btn-xls:hover{background:rgba(71,163,255,.22)}
+.btn-doc{background:rgba(196,127,255,.12);border-color:rgba(196,127,255,.3);color:#c47fff}.btn-doc:hover{background:rgba(196,127,255,.22)}
+.panel{display:none;padding:24px}.panel.active{display:block}
+.ptitle{font-family:'Bebas Neue',sans-serif;font-size:29px;letter-spacing:1px;margin-bottom:4px}
+.psub{color:var(--mu);font-size:13px;margin-bottom:20px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:10px;padding:18px;position:relative}
+.ctitle{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mu);margin-bottom:12px;font-weight:500}
+.metric{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:16px}
+.ml{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mu);margin-bottom:5px}
+.mv{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;line-height:1}
+.ms{font-size:11px;color:var(--mu);margin-top:3px}
+.cw{position:relative;width:100%}
+.dz{border:2px dashed var(--b2);border-radius:10px;padding:32px 20px;text-align:center;transition:all .2s;cursor:pointer;background:var(--s1);position:relative}
+.dz.on{border-color:var(--ac);background:rgba(232,255,71,.04)}
+.dz input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dz-ic{font-size:32px;margin-bottom:9px}.dz-t{font-size:14px;font-weight:500;margin-bottom:4px}.dz-s{font-size:12px;color:var(--mu)}
+.file-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--s2);border:1px solid var(--b1);border-radius:6px;margin-bottom:7px}
+.fn{font-size:13px;font-weight:500}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;padding:9px 12px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mu);border-bottom:1px solid var(--b1);font-weight:500;white-space:nowrap}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--b1);vertical-align:middle}
+.tbl tr:hover td{background:var(--s2)}.tbl tr:last-child td{border-bottom:none}
+.tbl-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;flex-wrap:wrap}
+.tbl-hdr .ctitle{margin:0}.tbl-dl-row{display:flex;gap:5px;flex-shrink:0}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:11px}
+.fl{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--mu);font-weight:500}
+.fi2{background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:8px 11px;color:var(--tx);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s;width:100%}
+.fi2:focus{border-color:var(--ac)}select.fi2{cursor:pointer}textarea.fi2{resize:vertical}
+.leg{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.ls{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mu)}.ld{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.al{padding:10px 13px;border-radius:6px;font-size:13px;margin-bottom:10px}
+.al-ok{background:rgba(46,213,115,.1);border:1px solid rgba(46,213,115,.25);color:var(--ok)}
+.al-warn{background:rgba(255,165,2,.1);border:1px solid rgba(255,165,2,.25);color:var(--wn)}
+.al-err{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.25);color:var(--dg)}
+.empty{text-align:center;padding:44px 20px;color:var(--mu)}
+.ei{font-size:40px;margin-bottom:12px}.et{font-size:15px;font-weight:500;color:var(--tx);margin-bottom:6px}
+.rc{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px;flex-shrink:0}
+.sep{height:1px;background:var(--b1);margin:12px 0}
+.sx{overflow-x:auto}
+#toast{position:fixed;bottom:22px;right:22px;z-index:999;background:var(--s3);border:1px solid var(--b2);border-radius:10px;padding:12px 16px;font-size:13px;max-width:310px;opacity:0;transition:opacity .3s;pointer-events:none}
+#toast.show{opacity:1}
+.chart-dl-btn{position:absolute;top:12px;right:12px;z-index:10;font-size:10px;padding:3px 8px;opacity:0;transition:opacity .2s}
+.card:hover .chart-dl-btn{opacity:1}
+/* AI DRAWER */
+#ai-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:199;backdrop-filter:blur(2px)}
+#ai-overlay.open{display:block}
+#ai-drawer{position:fixed;right:0;top:0;bottom:0;width:440px;background:var(--s1);border-left:1px solid var(--b2);display:flex;flex-direction:column;z-index:200;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1)}
+#ai-drawer.open{transform:translateX(0)}
+#ai-dh{padding:14px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:10px}
+#ai-dh-title{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1px;color:var(--a5)}
+#ai-saved-area{display:none;padding:10px 14px;border-bottom:1px solid var(--b1);max-height:190px;overflow-y:auto}
+#ai-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.aim{max-width:95%;line-height:1.7;font-size:13px;padding:12px 15px;border-radius:10px;word-break:break-word}
+.aim.u{align-self:flex-end;background:var(--s3);border:1px solid var(--b2);border-bottom-right-radius:3px}
+.aim.b{align-self:flex-start;background:rgba(196,127,255,.08);border:1px solid rgba(196,127,255,.18);border-bottom-left-radius:3px}
+.aim.b h1{font-size:16px;font-weight:600;color:var(--a5);margin:10px 0 6px;padding-bottom:4px;border-bottom:1px solid rgba(196,127,255,.2)}
+.aim.b h2{font-size:14px;font-weight:600;color:var(--a5);margin:10px 0 5px}
+.aim.b h3{font-size:13px;font-weight:600;color:var(--ac);margin:8px 0 4px}
+.aim.b p{margin:5px 0}.aim.b strong,.aim.b b{color:var(--a5);font-weight:600}
+.aim.b em{color:var(--mu);font-style:italic}
+.aim.b ul,.aim.b ol{margin:6px 0 6px 18px}.aim.b li{margin:3px 0}
+.aim.b code{font-family:'DM Mono',monospace;font-size:11px;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px;color:var(--ac)}
+.aim.b hr{border:none;border-top:1px solid var(--b1);margin:10px 0}
+.aim.th{color:var(--mu);font-style:italic;background:transparent;border:none;padding:4px 0;align-self:flex-start}
+.aim.er{background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.2);color:var(--dg)}
+.ai-saved-item{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:10px 12px;margin-bottom:7px}
+.ai-saved-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:5px}
+.ai-saved-q{font-size:12px;font-weight:500;color:var(--tx)}
+.ai-saved-a{font-size:11px;color:var(--mu);line-height:1.5;overflow:hidden;max-height:52px;position:relative}
+.ai-saved-a::after{content:'';position:absolute;bottom:0;left:0;right:0;height:20px;background:linear-gradient(transparent,var(--s2))}
+#ai-input-wrap{padding:12px 14px;border-top:1px solid var(--b1);flex-shrink:0;display:flex;flex-direction:column;gap:7px}
+#ai-chips{display:flex;flex-wrap:wrap;gap:5px}
+.aic{font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(196,127,255,.1);color:var(--a5);border:1px solid rgba(196,127,255,.2);cursor:pointer;transition:all .15s;white-space:nowrap;user-select:none}
+.aic:hover{background:rgba(196,127,255,.22)}
+#ai-textarea{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px 12px;color:var(--tx);font-size:13px;font-family:'DM Sans',sans-serif;resize:none;outline:none;min-height:66px;max-height:140px;transition:border-color .15s}
+#ai-textarea:focus{border-color:var(--a5)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+@media print{#sb,#ai-drawer,#ai-overlay,.topbar{display:none}#main{margin-left:0}.panel{display:block!important}.btn{display:none}}
+@media(max-width:900px){#sb{display:none}#main{margin-left:0}.g2,.g4,.g5{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="app-root">
+
+<!-- SIDEBAR -->
+<div id="sb">
+  <div class="logo"><div class="logo-t">CYCLING<br>DIRECTOR</div><div class="logo-s">Race Intelligence</div></div>
+  <nav class="nav">
+    <div class="nst">Análisis</div>
+    <div class="ni active" id="nav-import"     onclick="navigate('import')">📂 Importar carrera</div>
+    <div class="ni" id="nav-dashboard"          onclick="navigate('dashboard')">📊 Dashboard</div>
+    <div class="ni" id="nav-power"              onclick="navigate('power')">⚡ Potencia y picos</div>
+    <div class="ni" id="nav-heartrate"          onclick="navigate('heartrate')">❤️ FC y zonas</div>
+    <div class="ni" id="nav-profile"            onclick="navigate('profile')">🎯 Perfil ciclista</div>
+    <div class="ni" id="nav-individual"         onclick="navigate('individual')">🚴 Vista individual</div>
+    <div class="sep" style="margin:8px 0"></div>
+    <div class="nst">Gestión</div>
+    <div class="ni" id="nav-team"               onclick="navigate('team')">👥 Plantilla</div>
+    <div class="ni" id="nav-history"            onclick="navigate('history')">📅 Histórico</div>
+    <div class="sep" style="margin:8px 0"></div>
+    <div class="nst">Inteligencia</div>
+    <div class="ni" id="nav-ai"                 onclick="openAI()">🤖 Asistente IA</div>
+  </nav>
+  <div class="sb-bot">
+    <div class="sb-ct">Ciclistas: <span id="sc-riders">0</span></div>
+    <div class="sb-ct">Carreras:  <span id="sc-races">0</span></div>
+    <button class="btn" style="width:100%;justify-content:center;margin-top:4px;font-size:11px" onclick="exportAllData()">⬇ Exportar todo</button>
+    <button class="btn" style="width:100%;justify-content:center;margin-top:5px;font-size:11px;color:var(--mu)" onclick="doLogout()">↩ Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div class="topbar">
+    <div class="tb-t" id="topbar-title">Importar carrera</div>
+    <div class="tb-a">
+      <button class="btn" onclick="exportSummaryCSV()">⬇ CSV</button>
+      <button class="btn" onclick="exportAllChartsPNG()">🖼 PNGs</button>
+      <button class="btn btn-ac" onclick="window.print()">🖨 Imprimir</button>
+    </div>
+  </div>
+
+  <!-- IMPORT -->
+  <div class="panel active" id="panel-import">
+    <div class="ptitle">Importar carrera</div>
+    <div class="psub">Arrastra los CSV de telemetría (uno por ciclista) y el archivo de plantilla del equipo</div>
+    <div class="g2" style="align-items:start;gap:18px">
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="ctitle">🚴 Archivos CSV de carrera</div>
+          <div class="dz" id="dz-race">
+            <input type="file" multiple accept=".csv,.txt" onchange="stageRaceFiles(this.files)">
+            <div class="dz-ic">📁</div>
+            <div class="dz-t">Arrastra archivos CSV de carrera</div>
+            <div class="dz-s">Timestamp; FC (bpm); Potencia (W); Cadencia; Velocidad (km/h); Altitud (m); Distancia (km)</div>
+          </div>
+          <div id="staged-files" style="margin-top:10px"></div>
+        </div>
+        <div class="card">
+          <div class="ctitle">👥 Plantilla de ciclistas</div>
+          <div class="dz" id="dz-plant" style="padding:22px">
+            <input type="file" accept=".csv,.txt" onchange="stagePlantilla(this.files[0])">
+            <div class="dz-ic" style="font-size:26px">📋</div>
+            <div class="dz-t" style="font-size:14px">Arrastra plantilla_ciclistas.csv</div>
+            <div class="dz-s">Nombre; Fecha Nac.; Peso (kg); FTP (W); FC Máxima; Edad; Categoría; W/kg; PRO</div>
+          </div>
+          <div id="plantilla-status" style="margin-top:8px"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="ctitle">⚙ Datos de la carrera</div>
+          <div class="fg"><label class="fl">Nombre de la carrera</label><input class="fi2" id="c-name" placeholder="Ej: Carrera Pinedo 2026"></div>
+          <div class="fg"><label class="fl">Fecha</label><input class="fi2" type="date" id="c-date"></div>
+          <div class="fg"><label class="fl">Circuito / Lugar</label><input class="fi2" id="c-venue" placeholder="Ej: Circuito de Pinedo, Valencia"></div>
+          <div class="fg"><label class="fl">Notas del director</label><textarea class="fi2" id="c-notes" rows="3" placeholder="Observaciones, condiciones meteorológicas, táctica empleada..."></textarea></div>
+        </div>
+        <div class="card">
+          <div class="ctitle">📊 Estado</div>
+          <div id="import-status">
+            <div class="empty" style="padding:22px"><div class="ei">⏳</div><div class="et">Sin datos</div></div>
+          </div>
+          <button class="btn btn-ac" style="width:100%;justify-content:center;margin-top:12px;padding:10px;font-size:13px" onclick="runAndSaveAnalysis()">
+            ▶ Analizar y guardar en base de datos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="panel" id="panel-dashboard">
+    <div class="ptitle" id="dash-title">Dashboard</div>
+    <div class="psub"   id="dash-sub">Resumen ejecutivo</div>
+    <div id="dash-kpis" class="g5" style="margin-bottom:16px"></div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card"><div class="ctitle">Potencia normalizada vs FTP</div><div class="cw" style="height:230px"><canvas id="ch-npftp"></canvas></div></div>
+      <div class="card"><div class="ctitle">Factor intensidad (IF) y TSS</div><div class="cw" style="height:230px"><canvas id="ch-iftss"></canvas></div></div>
+    </div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card"><div class="ctitle">Velocidad media (km/h)</div><div class="cw" style="height:190px"><canvas id="ch-speed"></canvas></div></div>
+      <div class="card"><div class="ctitle">Distancia completada (km)</div><div class="cw" style="height:190px"><canvas id="ch-dist"></canvas></div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="tbl-hdr">
+        <div class="ctitle">📋 Tabla resumen completa</div>
+        <div class="tbl-dl-row">
+          <button class="btn btn-sm btn-csv" onclick="dlTableCSV('dash-tbl','resumen_carrera')">⬇ CSV</button>
+          <button class="btn btn-sm btn-xls" onclick="dlTableXLSX('dash-tbl','resumen_carrera')">⬇ Excel</button>
+        </div>
+      </div>
+      <div class="sx"><table class="tbl" id="dash-tbl">
+        <thead><tr><th>Ciclista</th><th>Cat.</th><th>FTP</th><th>W/kg</th><th>NP</th><th>IF</th><th>TSS</th><th>Dist.</th><th>Tiempo</th><th>FC med</th><th>FC máx obs</th><th>%FCmáx</th><th>P5s</th><th>P20min</th><th>Vel med</th></tr></thead>
+        <tbody id="dash-tbody"></tbody>
+      </table></div>
+    </div>
+    <div class="card"><div class="ctitle">💡 Análisis automático</div><div id="dash-insights"></div></div>
+  </div>
+
+  <!-- POTENCIA -->
+  <div class="panel" id="panel-power">
+    <div class="ptitle">Potencia y picos</div><div class="psub">Curva MMP · Picos por duración · Explosividad · VO2max</div>
+    <div class="card" style="margin-bottom:14px"><div class="ctitle">Curva MMP — potencia máxima media</div><div class="leg" id="leg-mmp"></div><div class="cw" style="height:290px"><canvas id="ch-mmp"></canvas></div></div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card"><div class="ctitle">Pico 5s — explosividad</div><div class="cw" style="height:210px"><canvas id="ch-p5s"></canvas></div></div>
+      <div class="card"><div class="ctitle">Pico 30s — capacidad anaeróbica</div><div class="cw" style="height:210px"><canvas id="ch-p30s"></canvas></div></div>
+    </div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card"><div class="ctitle">Pico 5min — VO2max</div><div class="cw" style="height:210px"><canvas id="ch-p5m"></canvas></div></div>
+      <div class="card"><div class="ctitle">Pico 20min — FTP real estimado</div><div class="cw" style="height:210px"><canvas id="ch-p20m"></canvas></div></div>
+    </div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card"><div class="ctitle">Explosividad relativa (pico5s ÷ FTP)</div><div class="cw" style="height:190px"><canvas id="ch-explo"></canvas></div></div>
+      <div class="card"><div class="ctitle">VO2max relativo (pico5min ÷ FTP)</div><div class="cw" style="height:190px"><canvas id="ch-vo2r"></canvas></div></div>
+    </div>
+    <div class="card"><div class="ctitle">Potencia media activa (excl. ceros)</div><div class="cw" style="height:190px"><canvas id="ch-avgp"></canvas></div></div>
+  </div>
+
+  <!-- FC -->
+  <div class="panel" id="panel-heartrate">
+    <div class="ptitle">FC y zonas</div><div class="psub">Carga cardíaca · Zonas FC · Zonas potencia</div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card"><div class="ctitle">FC media % FCmáxima</div><div class="cw" style="height:220px"><canvas id="ch-fcpct"></canvas></div></div>
+      <div class="card"><div class="ctitle">FC máxima observada vs registrada</div><div class="leg"><span class="ls"><span class="ld" style="background:#ff4757"></span>FC obs</span><span class="ls"><span class="ld" style="background:#444"></span>FCmáx</span></div><div class="cw" style="height:200px"><canvas id="ch-fcmax"></canvas></div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px"><div class="ctitle">Zonas FC — % tiempo</div><div class="leg"><span class="ls"><span class="ld" style="background:#1a3a6e"></span>Z1</span><span class="ls"><span class="ld" style="background:#47a3ff"></span>Z2</span><span class="ls"><span class="ld" style="background:#47ffb8"></span>Z3</span><span class="ls"><span class="ld" style="background:#ffa502"></span>Z4</span><span class="ls"><span class="ld" style="background:#ff4757"></span>Z5</span></div><div class="cw" style="height:270px"><canvas id="ch-fczones"></canvas></div></div>
+    <div class="g2">
+      <div class="card"><div class="ctitle">Zonas potencia Coggan</div><div class="leg"><span class="ls"><span class="ld" style="background:#1a2a6e"></span>Z1</span><span class="ls"><span class="ld" style="background:#47a3ff"></span>Z2</span><span class="ls"><span class="ld" style="background:#47ffb8"></span>Z3</span><span class="ls"><span class="ld" style="background:#e8ff47"></span>Z4</span><span class="ls"><span class="ld" style="background:#ffa502"></span>Z5</span><span class="ls"><span class="ld" style="background:#ff4757"></span>Z6</span></div><div class="cw" style="height:240px"><canvas id="ch-pwzones"></canvas></div></div>
+      <div class="card"><div class="ctitle">% tiempo Z5 FC (&gt;90% FCmáx)</div><div class="cw" style="height:240px"><canvas id="ch-z5fc"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- PERFIL -->
+  <div class="panel" id="panel-profile">
+    <div class="ptitle">Perfil del ciclista</div><div class="psub">Radar · W/kg · Eficiencia cardíaca · Tipología</div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card"><div class="ctitle">Radar — perfil comparativo</div><div class="leg" id="leg-radar"></div><div class="cw" style="height:330px"><canvas id="ch-radar"></canvas></div></div>
+      <div>
+        <div class="card" style="margin-bottom:14px"><div class="ctitle">W/kg FTP</div><div class="cw" style="height:190px"><canvas id="ch-wkg"></canvas></div></div>
+        <div class="card"><div class="ctitle">Eficiencia cardíaca (NP/FC)</div><div class="cw" style="height:155px"><canvas id="ch-eff"></canvas></div></div>
+      </div>
+    </div>
+    <div class="card"><div class="ctitle">📌 Tipología y diagnóstico</div><div id="profile-typo"></div></div>
+  </div>
+
+  <!-- INDIVIDUAL -->
+  <div class="panel" id="panel-individual">
+    <div class="ptitle">Vista individual</div><div class="psub">Análisis profundo · Series temporales · Descarga por gráfico</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+      <select class="fi2" id="sel-rider" onchange="onRiderSelect()" style="max-width:260px"><option value="">— Selecciona un ciclista —</option></select>
+      <button class="btn" id="btn-dl-individual" onclick="dlIndividualCharts()" style="display:none">🖼 Descargar gráficos</button>
+    </div>
+    <div id="individual-content"><div class="empty"><div class="ei">🚴</div><div class="et">Selecciona un ciclista</div></div></div>
+  </div>
+
+  <!-- TEAM -->
+  <div class="panel" id="panel-team">
+    <div class="ptitle">Gestión de plantilla</div><div class="psub">Consulta, alta, edición, histórico de métricas y sincronización</div>
+    
+    <div class="card" style="margin-bottom:14px">
+      <!-- Top Bar: Tabs & Search -->
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-sm" id="btn-tab-activos" onclick="setTeamTab(true)" style="background:var(--s3);color:var(--ac);border-color:var(--ac)">▶ Activos</button>
+          <button class="btn btn-sm" id="btn-tab-bajas" onclick="setTeamTab(false)" style="color:var(--mu)">⏸ Bajas</button>
+        </div>
+        
+        <div style="display:flex;gap:10px;flex:1;max-width:400px">
+          <input type="text" class="fi2" id="t-search" placeholder="🔍 Buscar ciclista..." onkeyup="filterTeamTable()">
+          <select class="fi2" id="t-category" onchange="filterTeamTable()" style="max-width:140px">
+            <option value="">Todas las cat.</option>
+            <option>Cadete 1º</option><option>Cadete 2º</option><option>Juvenil 1º</option>
+            <option>Juvenil 2º</option><option>Sub-23</option><option>Elite</option>
+            <option>+50</option><option>Máster</option>
+          </select>
+        </div>
+        
+        <div style="display:flex;gap:7px">
+          <button class="btn btn-sm btn-csv" onclick="exportTeamCSV()">⬇ CSV</button>
+          <button class="btn btn-sm btn-xls" onclick="exportTeamXLSX()">⬇ Excel</button>
+          <button class="btn btn-sm btn-ac" onclick="openRiderModal()">➕ Añadir Ciclista</button>
+        </div>
+      </div>
+      
+      <!-- Table wrap -->
+      <div class="sx">
+        <div id="team-table-wrap"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIDER MODAL (Add/Edit) -->
+  <dialog id="mod-rider" style="padding:0;border:none;border-radius:12px;background:var(--s1);color:var(--tx);max-width:500px;width:100%;backdrop-filter:blur(5px)">
+    <div style="padding:18px 24px;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center">
+      <div class="ctitle" style="margin:0" id="mod-rider-title">➕ Añadir ciclista</div>
+      <button class="btn btn-sm" onclick="closeRiderModal()">✕</button>
+    </div>
+    <div style="padding:24px">
+      <input type="hidden" id="f-rider-id">
+      <div class="fg"><label class="fl">Nombre *</label><input class="fi2" id="f-name" placeholder="Ej: Ivan Sanchez"></div>
+      
+      <div class="g2" style="gap:10px">
+        <div class="fg"><label class="fl">Fecha nac.</label><input class="fi2" type="date" id="f-dob" onchange="autoCalculateCategory()"></div>
+        <div class="fg"><label class="fl">Fecha de alta</label><input class="fi2" type="date" id="f-reg-date"></div>
+      </div>
+
+      <div class="g2" style="gap:10px">
+        <div class="fg"><label class="fl">Categoría</label>
+          <select class="fi2" id="f-cat" onchange="onCategoryChange()">
+            <option>Cadete 1º</option><option>Cadete 2º</option>
+            <option>Juvenil 1º</option><option>Juvenil 2º</option>
+            <option>Sub-23</option><option>Elite</option>
+            <option>Master 30</option><option>Master 40</option><option>Master 50</option><option>Master 60</option>
+            <option value="custom">-- Personalizada --</option>
+          </select>
+        </div>
+        <div class="fg" id="fg-cat-custom" style="display:none"><label class="fl">Cat. Personalizada</label><input class="fi2" id="f-cat-custom" placeholder="Ej: Cicloturista"></div>
+        <div class="fg" id="fg-pro-wrap"><label class="fl">PRO</label><select class="fi2" id="f-pro" onchange="autoCalculateCategory()"><option>No</option><option>Sí</option></select></div>
+      </div>
+
+      <div class="sep"></div>
+      <div class="ctitle" style="font-size:9px;margin-bottom:10px">Métricas y Medición Histórica</div>
+
+      <div class="g2" style="gap:10px">
+        <div class="fg"><label class="fl">Fecha medición</label><input class="fi2" type="date" id="f-meas-date"></div>
+        <div class="fg"><label class="fl">Peso (kg)</label><input class="fi2" type="number" id="f-peso" step="0.1"></div>
+      </div>
+      <div class="g2" style="gap:10px">
+        <div class="fg"><label class="fl">FTP (W)</label><input class="fi2" type="number" id="f-ftp"></div>
+        <div class="fg"><label class="fl">FC Máxima</label><input class="fi2" type="number" id="f-fcmax"></div>
+      </div>
+
+      <div class="fg"><label class="fl">Notas</label><input class="fi2" id="f-notes" placeholder="Observaciones"></div>
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <button class="btn btn-ac" onclick="saveRiderForm()" style="flex:1;justify-content:center;padding:10px">💾 Guardar ciclista</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- PROGRESSION MODAL -->
+  <dialog id="mod-progression" style="padding:0;border:none;border-radius:12px;background:var(--s1);color:var(--tx);max-width:700px;width:100%;backdrop-filter:blur(5px)">
+    <div style="padding:18px 24px;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center">
+      <div class="ctitle" style="margin:0" id="mod-progression-title">📉 Progresión Histórica</div>
+      <button class="btn btn-sm" onclick="document.getElementById('mod-progression').close()">✕</button>
+    </div>
+    <div style="padding:24px">
+      <div id="progression-empty" class="empty" style="display:none"><div class="ei">📊</div><div class="et">Pocos datos</div><div style="font-size:12px">El ciclista necesita más de un registro de peso/FTP en el tiempo.</div></div>
+      <div id="progression-charts">
+        <div class="g2" style="margin-bottom:10px">
+          <div class="metric"><div class="ml">FTP Inicial</div><div class="mv" id="p-ftp-ini">--</div></div>
+          <div class="metric"><div class="ml">FTP Actual</div><div class="mv" id="p-ftp-act" style="color:var(--ac)">--</div></div>
+        </div>
+        <div class="cw" style="height:250px"><canvas id="ch-progression"></canvas></div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- HISTORY -->
+  <div class="panel" id="panel-history">
+    <div class="ptitle">Histórico de carreras</div><div class="psub">Datos guardados en Supabase · Acceso desde cualquier dispositivo</div>
+    <div class="card"><div id="history-table-wrap"></div></div>
+  </div>
+</div><!-- /main -->
+
+<!-- AI DRAWER -->
+<div id="ai-overlay" onclick="closeAI()"></div>
+<div id="ai-drawer">
+  <div id="ai-dh">
+    <div style="display:flex;align-items:center;gap:10px"><div id="ai-dh-title">🤖 Asistente IA</div></div>
+    <div style="display:flex;gap:7px">
+      <button class="btn btn-sm btn-doc" onclick="exportAllAIDoc()" title="Descargar todos los análisis en Word">⬇ Word</button>
+      <button class="btn btn-sm" onclick="clearChat()">🗑</button>
+      <button class="btn btn-sm" onclick="closeAI()">✕</button>
+    </div>
+  </div>
+  <div id="ai-saved-area">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mu);margin-bottom:8px">Análisis guardados de esta carrera</div>
+    <div id="ai-saved-list"></div>
+  </div>
+  <div id="ai-messages">
+    <div class="aim b">👋 Hola. Cuando tengas una carrera cargada puedo analizar los datos y responder cualquier pregunta técnica.<br><br>Todos los análisis se guardan automáticamente en Supabase con la carrera y los puedes descargar en Word.</div>
+  </div>
+  <div id="ai-input-wrap">
+    <div id="ai-chips">
+      <span class="aic" onclick="setAIPrompt('¿Cuántos picos superaron el 120% del FTP y en qué minutos ocurrieron para cada ciclista?')">⚡ Picos anaeróbicos</span>
+      <span class="aic" onclick="setAIPrompt('¿En qué momento empezó la fatiga en cada ciclista? Analiza la evolución de potencia y FC.')">📉 Inicio de fatiga</span>
+      <span class="aic" onclick="setAIPrompt('Analiza la eficiencia cardíaca (W/bpm) de cada ciclista y qué significa para su forma actual.')">❤️ Eficiencia</span>
+      <span class="aic" onclick="setAIPrompt('Clasifica a cada ciclista: rodador, escalador, esprínter o rouleur, según los datos.')">🎯 Tipología</span>
+      <span class="aic" onclick="setAIPrompt('Diseña un plan de entrenamiento para las próximas 4 semanas para cada ciclista basado en esta carrera.')">📋 Plan entreno</span>
+      <span class="aic" onclick="setAIPrompt('Dame un informe completo: resumen ejecutivo, análisis por ciclista, conclusiones y recomendaciones.')">📄 Informe completo</span>
+    </div>
+    <textarea id="ai-textarea" placeholder="Escribe tu pregunta sobre la carrera…" rows="3" onkeydown="onAIKey(event)"></textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:11px;color:var(--mu)">Enter = enviar · Shift+Enter = nueva línea</div>
+      <button class="btn btn-sm" style="background:var(--a5);color:#000;border-color:var(--a5);font-weight:600" onclick="sendAIMessage()">Enviar ↗</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+</div><!-- /app-root -->
+
+<script type="module">
+import { navigate, stageRaceFiles, stagePlantilla,
+         runAndSaveAnalysis, loadRaceFromHistory,
+         showToast, downloadFile, APP } from './src/main.js'
+import { renderIndividual, downloadIndividualCharts } from './src/pages/Individual.js'
+import { saveRiderForm, fillRiderForm, removeRider,
+         clearRiderForm, exportTeamCSV, exportTeamXLSX,
+         setTeamTab, filterTeamTable, openRiderModal, closeRiderModal,
+         openProgressionModal, toggleRiderActiveStatus, handleSort,
+         autoCalculateCategory, onCategoryChange } from './src/pages/Team.js'
+import { confirmDeleteRace, exportHistoryCSV, exportHistoryXLSX } from './src/pages/History.js'
+import { openAI, closeAI, clearChat, setPrompt, handleKey,
+         sendMessage, exportAllAnalysesDoc, exportRaceAnalysesDocById } from './src/pages/AIAssistant.js'
+import { dlTableCSV, dlTableXLSX } from './src/components/TableDownload.js'
+
+// Wire up all global onclick handlers
+window.navigate            = navigate
+window.stageRaceFiles      = stageRaceFiles
+window.stagePlantilla      = stagePlantilla
+window.runAndSaveAnalysis  = runAndSaveAnalysis
+window.loadRaceFromHistory = loadRaceFromHistory
+window.showToast           = showToast
+
+window.onRiderSelect = () => {
+  const idx = parseInt(document.getElementById('sel-rider').value)
+  if (!isNaN(idx) && idx >= 0) renderIndividual(idx)
+}
+window.dlIndividualCharts  = downloadIndividualCharts
+
+window.saveRiderForm       = saveRiderForm
+window.editRider           = fillRiderForm
+window.deleteRiderById     = removeRider
+window.clearRiderFormUI    = clearRiderForm
+window.exportTeamCSV       = exportTeamCSV
+window.exportTeamXLSX      = exportTeamXLSX
+window.setTeamTab          = setTeamTab
+window.filterTeamTable     = filterTeamTable
+window.openRiderModal      = openRiderModal
+window.closeRiderModal     = closeRiderModal
+window.openProgressionModal= openProgressionModal
+window.toggleRiderActiveStatus = toggleRiderActiveStatus
+window.handleSort          = handleSort
+window.autoCalculateCategory = autoCalculateCategory
+window.onCategoryChange      = onCategoryChange
+
+window.confirmDeleteRace   = confirmDeleteRace
+window.exportHistoryCSV    = exportHistoryCSV
+window.exportHistoryXLSX   = exportHistoryXLSX
+window.exportRaceAIDoc     = exportRaceAnalysesDocById
+
+window.openAI              = openAI
+window.closeAI             = closeAI
+window.clearChat           = clearChat
+window.setAIPrompt         = setPrompt
+window.onAIKey             = handleKey
+window.sendAIMessage       = sendMessage
+window.exportAllAIDoc      = exportAllAnalysesDoc
+
+window.dlTableCSV          = dlTableCSV
+window.dlTableXLSX         = dlTableXLSX
+
+window.exportSummaryCSV = () => {
+  if (!APP.analysis.length) { showToast('⚠ Sin datos'); return }
+  const H = ['Nombre','Cat.','FTP','W/kg','NP','IF','TSS','Dist km','Dur min','FC med','FC máx','%FCmáx','P5s','P20min','Vel med']
+  const rows = APP.analysis.map(r => [r.name,r.categoria,r.FTP,r.wkg,r.NP,r.IF,r.TSS,r.dist,r.durMin,r.avgFC,r.maxFCo,r.pctFC,r.peaks.p5s,r.peaks.p20m,r.avgSp])
+  downloadFile('\uFEFF'+[H,...rows].map(r=>r.join(';')).join('\n'), 'analisis_carrera.csv', 'text/csv;charset=utf-8')
+}
+window.exportAllChartsPNG = () => {
+  const charts = Object.entries(APP.charts)
+  if (!charts.length) { showToast('⚠ Sin gráficos'); return }
+  charts.forEach(([id, ch]) => { const a = document.createElement('a'); a.download = id+'.png'; a.href = ch.toBase64Image('image/png',1); a.click() })
+  showToast('✅ ' + charts.length + ' gráficos exportados')
+}
+window.exportAllData = () => {
+  window.exportSummaryCSV()
+  window.exportTeamCSV()
+}
+window.doLogout = async () => {
+  const { supabase } = await import('./src/lib/supabase.js')
+  await supabase.auth.signOut()
+  location.reload()
+}
+
+// Set today's date
+document.getElementById('c-date').valueAsDate = new Date()
+
+// Drag-and-drop on drop zones
+;['dz-race','dz-plant'].forEach(id => {
+  const el = document.getElementById(id)
+  el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('on') })
+  el.addEventListener('dragleave', () => el.classList.remove('on'))
+  el.addEventListener('drop', e => {
+    e.preventDefault(); el.classList.remove('on')
+    if (id === 'dz-race') stageRaceFiles(e.dataTransfer.files)
+    else if (e.dataTransfer.files[0]) stagePlantilla(e.dataTransfer.files[0])
+  })
+})
+</script>
+</body>
+</html>
