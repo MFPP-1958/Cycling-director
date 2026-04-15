@@ -1,7 +1,7 @@
 import { APP, loadRaceFromHistory, showToast, downloadFile } from '../main.js'
 import { deleteRace } from '../api/races.js'
 
-const COLORS = ['#e8ff47','#47a3ff','#47ffb8','#ffa502','#c47fff','#ff6b47','#ff4757','#47ffea']
+const COLORS = ['#00AEEF','#47a3ff','#47ffb8','#ffa502','#c47fff','#ff6b47','#ff4757','#47ffea']
 
 export function renderHistory (races) {
   const el = document.getElementById('history-table-wrap')

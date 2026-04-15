@@ -9,7 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#0a0c0f;--s1:#12151a;--s2:#1a1e26;--s3:#222736;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.14);--tx:#eef0f5;--mu:#7a8090;--ac:#e8ff47;--a2:#47a3ff;--a3:#ff6b47;--a4:#47ffb8;--a5:#c47fff;--dg:#ff4757;--wn:#ffa502;--ok:#2ed573}
+:root{--bg:#0a0c0f;--s1:#12151a;--s2:#1a1e26;--s3:#222736;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.14);--tx:#eef0f5;--mu:#7a8090;--ac:#00AEEF;--a2:#47a3ff;--a3:#ff6b47;--a4:#47ffb8;--a5:#c47fff;--dg:#ff4757;--wn:#ffa502;--ok:#2ed573}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5;min-height:100vh}
 #sb{position:fixed;left:0;top:0;bottom:0;width:214px;background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;z-index:100}
@@ -118,7 +118,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-
 
 <!-- SIDEBAR -->
 <div id="sb">
-  <div class="logo"><div class="logo-t">CYCLING<br>DIRECTOR</div><div class="logo-s">Race Intelligence</div></div>
+  <div class="logo" style="padding:15px;text-align:center">
+    <img src="/logo.png" alt="MFPP Logo" style="width:100%;max-width:160px;display:block;margin:0 auto">
+  </div>
   <nav class="nav">
     <div class="nst">Análisis</div>
     <div class="ni active" id="nav-import"     onclick="navigate('import')">📂 Importar carrera</div>

@@ -80,7 +80,7 @@ export function renderIndividual (idx) {
     makeChart('i-pwz', 'bar',
       ['Z1','Z2','Z3','Z4','Z5','Z6'],
       [{ label: '% tiempo', data: r.pwZones,
-         backgroundColor: ['#1a2a6e','#47a3ff','#47ffb8','#e8ff47','#ffa502','#ff4757'], borderRadius: 4,
+         backgroundColor: ['#1a2a6e','#47a3ff','#47ffb8','#00AEEF','#ffa502','#ff4757'], borderRadius: 4,
          datalabels: { display: true, anchor: 'end', align: 'top', color: '#e0e4ee', font: { size: 11, weight: '600' }, formatter: v => v > 0 ? v + '%' : '' }
       }],
       { scales: { y: { min: 0, max: Math.max(...r.pwZones, 10) + 12, ticks: { ...TX, callback: v => v + '%' }, grid: GR }, x: { ticks: TX, grid: GR } } },

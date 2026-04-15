@@ -399,11 +399,11 @@ export async function openProgressionModal(riderId) {
       [{
         label: 'FTP (W)',
         data: ftpData,
-        borderColor: '#e8ff47',
-        backgroundColor: '#e8ff4733',
+        borderColor: '#00AEEF',
+        backgroundColor: '#00AEEF33',
         fill: true,
         tension: 0.2,
-        pointBackgroundColor: '#e8ff47',
+        pointBackgroundColor: '#00AEEF',
         pointRadius: 5
       }], 
       { scales: SY(0) },

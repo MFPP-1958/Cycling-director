@@ -1,6 +1,6 @@
 import { APP } from '../main.js'
 
-export const COLORS = ['#e8ff47','#47a3ff','#47ffb8','#ffa502','#c47fff','#ff6b47','#ff4757','#47ffea']
+export const COLORS = ['#00AEEF','#47a3ff','#47ffb8','#ffa502','#c47fff','#ff6b47','#ff4757','#47ffea']
 export const COLORS_A = COLORS.map(c => c + '38')
 
 const BG_COLOR = '#12151a'

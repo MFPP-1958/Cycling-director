@@ -24,6 +24,11 @@ export const APP = {
 
 // ── Bootstrap ─────────────────────────────────────────────────────
 async function init () {
+  // Clear any error fragments from the URL hash (like expired OTPs)
+  if (window.location.hash.includes('error=')) {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+
   if (!supabase) {
     document.getElementById('app-root').innerHTML = `
       <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0c0f;padding:20px">
@@ -76,8 +81,7 @@ function renderAuth () {
   document.getElementById('app-root').innerHTML = `
     <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0c0f">
       <div style="background:#12151a;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:40px;width:360px;text-align:center">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:#e8ff47;margin-bottom:6px">CYCLING<br>DIRECTOR</div>
-        <div style="font-size:11px;color:#7a8090;letter-spacing:3px;text-transform:uppercase;margin-bottom:32px">Race Intelligence Platform</div>
+        <img src="/logo.png" alt="MFPP Logo" style="width:100%;max-width:240px;margin-bottom:32px">
         <div id="auth-msg" style="font-size:13px;color:#7a8090;margin-bottom:20px">Inicia sesión para continuar</div>
         <input id="auth-email" type="email" placeholder="tu@email.com"
           style="width:100%;background:#1a1e26;border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:10px 12px;color:#eef0f5;font-size:13px;margin-bottom:10px;outline:none;box-sizing:border-box">

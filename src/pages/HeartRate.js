@@ -28,7 +28,7 @@ export function renderHeartRate () {
     { scales: { x: { stacked: true, ticks: { ...TX, maxRotation: 0 }, grid: GR }, y: { stacked: true, max: 100, ticks: { ...TX, callback: v => v + '%' }, grid: GR } } },
     'Zonas FC — % tiempo total', '%')
 
-  const pzC = ['#1a2a6e','#47a3ff','#47ffb8','#e8ff47','#ffa502','#ff4757']
+  const pzC = ['#1a2a6e','#47a3ff','#47ffb8','#00AEEF','#ffa502','#ff4757']
   makeChart('ch-pwzones', 'bar', nm,
     ['Z1','Z2','Z3','Z4 Umbral','Z5 VO2','Z6 AnCap'].map((l, i) => ({
       label: l, data: D.map(r => r.pwZones[i]), backgroundColor: pzC[i], borderRadius: 0
