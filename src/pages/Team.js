@@ -1,5 +1,5 @@
 import { APP, showToast, downloadFile } from '../main.js'
-import { upsertRider, deleteRider, toggleRiderActive, getRiderHistory } from '../api/riders.js'
+import { getRiders, upsertRider, deleteRider, toggleRiderActive, getRiderHistory } from '../api/riders.js'
 import { makeChart, SY, BD } from '../components/Chart.js'
 
 let state = {
@@ -237,7 +237,17 @@ export function onCategoryChange() {
 export async function saveRiderForm () {
   const id       = document.getElementById('f-rider-id')?.value || null
   const name     = document.getElementById('f-name')?.value.trim()
-  if (!name) { showToast('⚠ El nombre es obligatorio'); return }
+  
+  if (!name) { 
+    showToast('⚠ El nombre es obligatorio')
+    return 
+  }
+
+  // Capturamos el ID del equipo. Si no hay equipo, no podemos guardar.
+  if (!APP.team?.id) {
+    showToast('❌ Error: No se ha detectado tu equipo. Recarga la página.')
+    return
+  }
 
   const dob      = document.getElementById('f-dob')?.value        || null
   const regDate  = document.getElementById('f-reg-date')?.value   || null
@@ -268,16 +278,25 @@ export async function saveRiderForm () {
       registrationDate: regDate, measurementDate: measDate
     })
     
-    // refresh riders list
-    const { getRiders } = await import('../api/riders.js')
-    APP.riders = await getRiders(APP.team.id)
-    document.getElementById('sc-riders').textContent = APP.riders.filter(r => r.is_active !== false).length
-    filterTeamTable()
-    
+    // Cerramos el modal inmediatamente para dar feedback visual
     closeRiderModal()
+
+    // Recargar la lista de ciclistas
+    const data = await getRiders(APP.team.id)
+    APP.riders = data
+    
+    // Actualizar contadores y tabla
+    const countEl = document.getElementById('sc-riders')
+    if (countEl) {
+      countEl.textContent = APP.riders.filter(r => r.is_active !== false).length
+    }
+    
+    filterTeamTable()
     showToast('✅ Guardado: ' + saved.name)
+    
   } catch (err) {
-    showToast('❌ Error: ' + err.message)
+    console.error('Error al guardar ciclista:', err)
+    showToast('❌ Error al guardar: ' + err.message)
   }
 }
 

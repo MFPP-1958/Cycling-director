@@ -11,17 +11,26 @@ export async function getRiders (teamId) {
 }
 
 export async function upsertRider (teamId, rider) {
+  if (!teamId) throw new Error('No se ha detectado el ID del equipo.')
+
   // Primero, obtenemos los datos actuales si existe para ver si cambiaron las métricas
   let oldData = null
   if (rider.id) {
-    const { data } = await supabase.from('riders').select('weight_kg, ftp_watts, fc_max').eq('id', rider.id).single()
-    oldData = data
+    try {
+      const { data } = await supabase.from('riders').select('weight_kg, ftp_watts, fc_max').eq('id', rider.id).single()
+      oldData = data
+    } catch (e) {
+      console.warn('No se pudo obtener datos previos del ciclista:', e)
+    }
   }
+
+  // Limpiamos fechas: si es string vacío, pasamos null
+  const cleanDate = (d) => (d && d.trim() !== '') ? d : null
 
   const payload = {
     team_id:           teamId,
     name:              rider.name,
-    birth_date:        rider.birthDate || null,
+    birth_date:        cleanDate(rider.birthDate),
     weight_kg:         rider.weightKg  || null,
     ftp_watts:         rider.ftpWatts  || null,
     fc_max:            rider.fcMax     || null,
@@ -30,7 +39,7 @@ export async function upsertRider (teamId, rider) {
     is_pro:            rider.isPro     || false,
     is_active:         rider.isActive !== undefined ? rider.isActive : true,
     notes:             rider.notes     || null,
-    registration_date: rider.registrationDate || new Date().toISOString().split('T')[0],
+    registration_date: cleanDate(rider.registrationDate) || new Date().toISOString().split('T')[0],
     updated_at:        new Date().toISOString()
   }
   if (rider.id) payload.id = rider.id
@@ -41,23 +50,30 @@ export async function upsertRider (teamId, rider) {
     .select()
     .single()
   
-  if (error) throw error
+  if (error) {
+    console.error('Error en upsertRider:', error)
+    throw error
+  }
 
   // Registrar en el histórico si es nuevo o si cambiaron las métricas
   const wChanged   = !oldData || oldData.weight_kg !== payload.weight_kg
   const ftpChanged = !oldData || oldData.ftp_watts !== payload.ftp_watts
   const fcChanged  = !oldData || oldData.fc_max !== payload.fc_max
 
-  if (wChanged || ftpChanged || fcChanged) {
-    await supabase.from('rider_metrics_history').insert({
-      rider_id:         data.id,
-      team_id:          teamId,
-      weight_kg:        data.weight_kg,
-      ftp_watts:        data.ftp_watts,
-      fc_max:           data.fc_max,
-      wkg:              data.wkg,
-      measurement_date: rider.measurementDate || new Date().toISOString().split('T')[0]
-    })
+  if (data && (wChanged || ftpChanged || fcChanged)) {
+    try {
+      await supabase.from('rider_metrics_history').insert({
+        rider_id:         data.id,
+        team_id:          teamId,
+        weight_kg:        data.weight_kg,
+        ftp_watts:        data.ftp_watts,
+        fc_max:           data.fc_max,
+        wkg:              data.wkg,
+        measurement_date: cleanDate(rider.measurementDate) || new Date().toISOString().split('T')[0]
+      })
+    } catch (e) {
+      console.error('Error guardando histórico (no crítico):', e)
+    }
   }
 
   return data
