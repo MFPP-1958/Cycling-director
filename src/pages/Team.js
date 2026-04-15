@@ -106,9 +106,9 @@ export function renderTeamTable (riders) {
     return
   }
 
-  const getSortIcon = (col) => {
-    if (state.sortCol !== col) return '<span style="opacity:0.2">↕</span>'
-    return state.sortDir === 'asc' ? '↑' : '↓'
+  function getSortIcon(col) {
+    if (state.sortCol !== col) return '<span style="opacity:0.3;color:var(--ac);margin-left:4px">↕</span>'
+    return `<span style="color:var(--ac);margin-left:4px;font-weight:bold">${state.sortDir === 'asc' ? '↑' : '↓'}</span>`
   }
 
   const COLORS = ['#e8ff47','#47a3ff','#47ffb8','#ffa502','#c47fff','#ff6b47','#ff4757','#47ffea']
@@ -235,6 +235,7 @@ export function onCategoryChange() {
 }
 
 export async function saveRiderForm () {
+  console.log('--- INICIO GUARDADO CICLISTA ---')
   const id       = document.getElementById('f-rider-id')?.value || null
   const name     = document.getElementById('f-name')?.value.trim()
   
@@ -243,9 +244,13 @@ export async function saveRiderForm () {
     return 
   }
 
+  console.log('Nombre detectado:', name)
+  console.log('APP state:', APP)
+
   // Capturamos el ID del equipo. Si no hay equipo, no podemos guardar.
   if (!APP.team?.id) {
-    showToast('❌ Error: No se ha detectado tu equipo. Recarga la página.')
+    console.error('ERROR: APP.team.id no existe')
+    alert('❌ Error crítico: No se ha detectado tu equipo (Team ID). Prueba a cerrar sesión y volver a entrar.')
     return
   }
 
@@ -257,6 +262,8 @@ export async function saveRiderForm () {
   const isPro    = document.getElementById('f-pro')?.value === 'Sí'
   const notes    = document.getElementById('f-notes')?.value      || null
   const measDate = document.getElementById('f-meas-date')?.value  || null
+
+  console.log('Datos a enviar:', { id, name, dob, regDate, weightKg, ftpWatts, fcMax, isPro, notes, measDate })
 
   const catSel   = document.getElementById('f-cat')
   let category   = catSel ? catSel.value : null
@@ -278,14 +285,11 @@ export async function saveRiderForm () {
       registrationDate: regDate, measurementDate: measDate
     })
     
-    // Cerramos el modal inmediatamente para dar feedback visual
     closeRiderModal()
 
-    // Recargar la lista de ciclistas
     const data = await getRiders(APP.team.id)
     APP.riders = data
     
-    // Actualizar contadores y tabla
     const countEl = document.getElementById('sc-riders')
     if (countEl) {
       countEl.textContent = APP.riders.filter(r => r.is_active !== false).length
